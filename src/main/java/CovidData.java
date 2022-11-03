@@ -19,6 +19,16 @@ public class CovidData
         this.date = date;
     }
 
+    public String getRegion()
+    {
+        return region;
+    }
+
+    public String getAge()
+    {
+        return age;
+    }
+
     @Override
     public String toString()
     {

@@ -1,47 +1,63 @@
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Main
 {
     public static void main(String[] args)
     {
-        ArrayList<CovidData> allData = new ArrayList<>();
+        FileHandler fileHandler = new FileHandler();
+        Scanner sc = new Scanner(System.in);
 
-        File f = new File("c:/Users/mathi/OneDrive/Skrivebord/" +
-                "overvaagningsdata-dashboard-covid19-27102022-q9l0/Regionalt_DB/" +
-                "11_noegletal_pr_region_pr_aldersgruppe.csv");
+        System.out.println("I dette program kan du se data over Covid-19 delt over Danmark");
+        System.out.println("""
+                1. Vis alt data usorteret
+                2. Vis data sorteret efter regioner
+                3. Vis data efter alder
+                4. Afslut
+                
+                """);
 
-        try
+        boolean askedExit = false;
+
+        while (!askedExit)
         {
-            Scanner sc = new Scanner(f, StandardCharsets.ISO_8859_1);
-            while (sc.hasNext())
-            {
-                String line = sc.nextLine();
-                String[] attributes = line.split(";");
+            int userChoice = sc.nextInt();
 
-                CovidData readData = new CovidData(
-                        attributes[0],
-                        attributes[1],
-                        Integer.parseInt(attributes[2]),
-                        Integer.parseInt(attributes[3]),
-                        Integer.parseInt(attributes[4]),
-                        Integer.parseInt(attributes[5]),
-                        attributes[6]);
-
-                allData.add(readData);
-            }
-            for (CovidData cd : allData)
+            switch (userChoice)
             {
-                System.out.println(cd);
+                case 1:
+                    for (CovidData cd : fileHandler.handleData())
+                    {
+                        System.out.println(cd);
+                    }
+                    break;
+
+                case 2:
+                    Collections.sort(fileHandler.handleData(), new RegionComparator());
+
+                    for (CovidData cd : fileHandler.handleData())
+                    {
+                        System.out.println(cd);
+                    }
+                    break;
+
+                case 3:
+                    Collections.sort(fileHandler.handleData(), new AgeComparator());
+                    for (CovidData cd : fileHandler.handleData())
+                    {
+                        System.out.println(cd);
+                    }
+                    break;
+
+                case 4:
+                    askedExit = true;
+                    System.out.println("Farvel");
+                    System.exit(0);
             }
         }
-
-        catch (Exception e)
-        {
-            System.out.println("Fejl i indlæsning: " + e.getMessage());
-        }
-
     }
 }
